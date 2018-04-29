@@ -35,6 +35,7 @@ public class NewsLoader extends AsyncTaskLoader<List<NewsClass>> {
         } else {
             Log.d(LOG_TAG, newsList.get(0).getTitle());
         }
+
         return newsList;
     }
 }

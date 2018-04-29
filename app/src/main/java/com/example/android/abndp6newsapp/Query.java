@@ -41,7 +41,6 @@ public final class Query {
             JSONArray newsArray = baseJSONresponse.getJSONArray("news");
             for (int i = 0; i < newsArray.length(); i++) {
 
-
             JSONObject currentNews = newsArray.getJSONObject(i);
             JSONObject properties = currentNews.getJSONObject("properties");
             String title = properties.getString("title");

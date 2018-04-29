@@ -40,7 +40,7 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(NEWS_LOADER_ID, null, this);
         } else {
-            View loadingIndicator = findViewById(R.id.loading_indicator);
+            View loadingIndicator = findViewById(R.id.progress);
             loadingIndicator.setVisibility(View.GONE);
             // Update empty state with no connection error message
             mEmptyStateTextView.setText(R.string.no_internet_connection);
@@ -74,17 +74,17 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
         @Override
     public void onLoadFinished(Loader<List<NewsClass>> loader, List<NewsClass> data) {
 
-            mAdapter.clear();
-            mEmptyStateTextView.setText(R.string.no_earthquakes);
+            mEmptyStateTextView.setText(R.string.no_news);
             View progress = findViewById(R.id.progress);
             progress.setVisibility(View.GONE);
             if (data != null && !data.isEmpty()) {
                 mAdapter.addAll(data);
+
             }
         }
 
     @Override
-    public void onLoaderReset(Loader<List<News>> loader) {
+    public void onLoaderReset(Loader<List<NewsClass>> loader) {
 mAdapter.clear();
     }
 
