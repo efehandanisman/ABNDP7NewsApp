@@ -33,10 +33,13 @@ public class NewsAdapter extends ArrayAdapter<NewsClass> {
 
         }
 TextView title = listItemView.findViewById(R.id.title);
+        title.setText(news.getTitle());
 
         TextView section = listItemView.findViewById(R.id.pillarName);
+section.setText(news.getSection());
 
-
+        TextView url = listItemView.findViewById(R.id.url);
+        url.setText(news.getUrl());
 
  return listItemView;
 

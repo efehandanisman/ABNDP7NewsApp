@@ -23,22 +23,24 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
     private NewsAdapter mAdapter;
     private TextView mEmptyStateTextView;
     private static final int NEWS_LOADER_ID = 1;
+    LoaderManager loaderManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        ListView NewsList = findViewById(R.id.list);
+        ListView newsList = findViewById(R.id.list);
         mAdapter = new NewsAdapter(this, new ArrayList<NewsClass>());
-        NewsList.setAdapter(mAdapter);
+        newsList.setAdapter(mAdapter);
 
 
         ConnectivityManager cm =
                 (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnected()) {
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(NEWS_LOADER_ID, null, this);
+            loaderManager = getLoaderManager();
+            loaderManager.initLoader(NEWS_LOADER_ID, null, News.this);
         } else {
             View loadingIndicator = findViewById(R.id.progress);
             loadingIndicator.setVisibility(View.GONE);
@@ -48,16 +50,17 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
 
 
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        NewsList.setEmptyView(mEmptyStateTextView);
+        newsList.setEmptyView(mEmptyStateTextView);
 
 
-        NewsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        newsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 NewsClass currentNews = mAdapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getUrl());
+                String url = currentNews.getUrl();
                 // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW);
+                websiteIntent.setData(Uri.parse(url));
                 startActivity(websiteIntent);
             }
         });
@@ -72,13 +75,13 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
         }
 
         @Override
-    public void onLoadFinished(Loader<List<NewsClass>> loader, List<NewsClass> data) {
-
+    public void onLoadFinished(Loader<List<NewsClass>> loader, List<NewsClass> newsList) {
+            mAdapter.clear();
             mEmptyStateTextView.setText(R.string.no_news);
             View progress = findViewById(R.id.progress);
             progress.setVisibility(View.GONE);
-            if (data != null && !data.isEmpty()) {
-                mAdapter.addAll(data);
+            if (newsList != null && !newsList.isEmpty()) {
+                mAdapter.addAll(newsList);
 
             }
         }

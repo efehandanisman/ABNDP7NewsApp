@@ -29,30 +29,46 @@ public final class Query {
 
     }
 
+
+    public static List<NewsClass> fetchNewsData(String requestUrl) {
+        URL url = createUrl(requestUrl);
+        String jsonResponse="";
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+
+                Log.e (LOG_TAG , "It was not possible to connect to the server", e) ;
+            }
+        List<NewsClass> newsList = extractFeatureFromJson(jsonResponse);
+        return newsList;
+
+    }
+
+
     private static List<NewsClass> extractFeatureFromJson(String newJSON) {
         if (TextUtils.isEmpty(newJSON)) {
             return null;
         }
 
-        List<NewsClass> news = new ArrayList<>();
+        List<NewsClass> newsList = new ArrayList<>();
 
         try {
             JSONObject baseJSONresponse = new JSONObject(newJSON);
-            JSONArray newsArray = baseJSONresponse.getJSONArray("news");
+            JSONObject responseObject = baseJSONresponse.getJSONObject("response");
+            JSONArray newsArray = responseObject.getJSONArray("results");
             for (int i = 0; i < newsArray.length(); i++) {
 
             JSONObject currentNews = newsArray.getJSONObject(i);
-            JSONObject properties = currentNews.getJSONObject("properties");
-            String title = properties.getString("title");
-            String section = properties.getString("section");
-            String url = properties.getString("url");
+            String title = currentNews.getString("webTitle");
+            String section = currentNews.getString("sectionName");
+            String url = currentNews.getString("id");
             NewsClass newEntry = new NewsClass(title, section, url);
-            news.add(newEntry);
+            newsList.add(newEntry);
         }
     } catch(JSONException e) {
         Log.e("Query", "Problem to parse results", e);
     }
-return news;
+return newsList;
 }
     private static URL createUrl(String stringUrl) {
         URL url = null;
@@ -60,6 +76,7 @@ return news;
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
             Log.e(LOG_TAG, "Problem building the URL ", e);
+            return null;
         }
         return url;
     }
@@ -117,22 +134,5 @@ return news;
         }
         return output.toString();
     }
-    public static List<NewsClass> fetchNewsData(String requestUrl) {
-        // Create URL object
-        URL url = createUrl(requestUrl);
 
-        // Perform HTTP request to the URL and receive a JSON response back
-        String jsonResponse = null;
-        try {
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
-        List<NewsClass> news = extractFeatureFromJson(jsonResponse);
-
-        // Return the list of {@link Earthquake}s
-        return news;
-    }
 }
