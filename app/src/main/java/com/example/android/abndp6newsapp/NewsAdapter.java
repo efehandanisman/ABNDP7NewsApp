@@ -16,8 +16,8 @@ import java.util.ArrayList;
 public class NewsAdapter extends ArrayAdapter<NewsClass> {
 
     public NewsAdapter(Activity context, ArrayList<NewsClass> News) {
-    super(context, 0, News);
-}
+        super(context, 0, News);
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -32,15 +32,16 @@ public class NewsAdapter extends ArrayAdapter<NewsClass> {
 
 
         }
-TextView title = listItemView.findViewById(R.id.title);
+        TextView title = listItemView.findViewById(R.id.title);
         title.setText(news.getTitle());
 
         TextView section = listItemView.findViewById(R.id.pillarName);
-section.setText(news.getSection());
+        section.setText(news.getSection());
 
-        TextView url = listItemView.findViewById(R.id.url);
-        url.setText(news.getUrl());
+        TextView date = listItemView.findViewById(R.id.date);
+        date.setText(news.getDate());
 
- return listItemView;
+        return listItemView;
 
-}}
+    }
+}

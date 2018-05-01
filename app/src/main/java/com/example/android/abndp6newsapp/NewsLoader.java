@@ -13,14 +13,16 @@ import java.util.List;
 public class NewsLoader extends AsyncTaskLoader<List<NewsClass>> {
     private static final String LOG_TAG = NewsLoader.class.getName();
     private String mUrl;
+
     public NewsLoader(Context context, String url) {
         super(context);
-        mUrl=url;
+        mUrl = url;
     }
-@Override
+
+    @Override
     protected void onStartLoading() {
         forceLoad();
-}
+    }
 
     @Override
     public List<NewsClass> loadInBackground() {

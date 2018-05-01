@@ -57,8 +57,9 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 NewsClass currentNews = mAdapter.getItem(position);
-                String url = currentNews.getUrl();
+                String cmp = currentNews.getUrl();
                 // Create a new intent to view the earthquake URI
+                String url = "https://www.theguardian.com/" + cmp;
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW);
                 websiteIntent.setData(Uri.parse(url));
                 startActivity(websiteIntent);
@@ -66,29 +67,28 @@ public class News extends AppCompatActivity implements LoaderManager.LoaderCallb
         });
 
 
-
     }
 
     @Override
-    public Loader<List<NewsClass>> onCreateLoader(int i,Bundle bundle) {
-        return new NewsLoader(this,GUARDIAN_REQUEST_URL);
-        }
+    public Loader<List<NewsClass>> onCreateLoader(int i, Bundle bundle) {
+        return new NewsLoader(this, GUARDIAN_REQUEST_URL);
+    }
 
-        @Override
+    @Override
     public void onLoadFinished(Loader<List<NewsClass>> loader, List<NewsClass> newsList) {
-            mAdapter.clear();
-            mEmptyStateTextView.setText(R.string.no_news);
-            View progress = findViewById(R.id.progress);
-            progress.setVisibility(View.GONE);
-            if (newsList != null && !newsList.isEmpty()) {
-                mAdapter.addAll(newsList);
+        mAdapter.clear();
+        mEmptyStateTextView.setText(R.string.no_news);
+        View progress = findViewById(R.id.progress);
+        progress.setVisibility(View.GONE);
+        if (newsList != null && !newsList.isEmpty()) {
+            mAdapter.addAll(newsList);
 
-            }
         }
+    }
 
     @Override
     public void onLoaderReset(Loader<List<NewsClass>> loader) {
-mAdapter.clear();
+        mAdapter.clear();
     }
 
 }

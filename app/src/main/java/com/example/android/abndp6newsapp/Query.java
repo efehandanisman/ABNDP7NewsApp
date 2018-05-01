@@ -15,7 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,13 +35,13 @@ public final class Query {
 
     public static List<NewsClass> fetchNewsData(String requestUrl) {
         URL url = createUrl(requestUrl);
-        String jsonResponse="";
+        String jsonResponse = "";
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
 
-                Log.e (LOG_TAG , "It was not possible to connect to the server", e) ;
-            }
+            Log.e(LOG_TAG, "It was not possible to connect to the server", e);
+        }
         List<NewsClass> newsList = extractFeatureFromJson(jsonResponse);
         return newsList;
 
@@ -58,18 +61,21 @@ public final class Query {
             JSONArray newsArray = responseObject.getJSONArray("results");
             for (int i = 0; i < newsArray.length(); i++) {
 
-            JSONObject currentNews = newsArray.getJSONObject(i);
-            String title = currentNews.getString("webTitle");
-            String section = currentNews.getString("sectionName");
-            String url = currentNews.getString("id");
-            NewsClass newEntry = new NewsClass(title, section, url);
-            newsList.add(newEntry);
+                JSONObject currentNews = newsArray.getJSONObject(i);
+                String title = currentNews.getString("webTitle");
+                String section = currentNews.getString("sectionName");
+                String url = currentNews.getString("id");
+                String date = currentNews.getString("webPublicationDate");
+                date = formatDate(date);
+                NewsClass newEntry = new NewsClass(title, section, url, date);
+                newsList.add(newEntry);
+            }
+        } catch (JSONException e) {
+            Log.e("Query", "Problem to parse results", e);
         }
-    } catch(JSONException e) {
-        Log.e("Query", "Problem to parse results", e);
+        return newsList;
     }
-return newsList;
-}
+
     private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
@@ -121,6 +127,7 @@ return newsList;
         }
         return jsonResponse;
     }
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -134,5 +141,19 @@ return newsList;
         }
         return output.toString();
     }
+    // Taken from https://github.com/laramartin/android_newsfeed/blob/master/app/src/main/java/eu/laramartin/newsfeed/QueryUtils.java
 
+    private static String formatDate(String rawDate) {
+        String jsonDatePattern = "yyyy-MM-dd";
+        SimpleDateFormat jsonFormatter = new SimpleDateFormat(jsonDatePattern);
+        try {
+            Date parsedJsonDate = jsonFormatter.parse(rawDate);
+            String finalDatePattern = "yyyy-MM-dd";
+            SimpleDateFormat finalDateFormatter = new SimpleDateFormat(finalDatePattern);
+            return finalDateFormatter.format(parsedJsonDate);
+        } catch (ParseException e) {
+            Log.e("QueryUtils", "Error parsing JSON date: ", e);
+            return "";
+        }
+    }
 }
